@@ -9,8 +9,13 @@ extern "C" {
 //SoftwareSerial mySerial (rxPin, txPin);
 SoftwareSerial swSer(14, 12);
 
-#define WIFI_DEFAULT_CHANNEL 8
-uint8_t esp2[] = {0x1A, 0xFE, 0x34, 0xDB, 0x3C, 0x64}; // esp number 2 - slave
+#define WIFI_DEFAULT_CHANNEL 9
+
+// esp dev - esp1[] = {0x1A, 0xFE, 0x34, 0xDB, 0x3C, 0x64};
+uint8_t esp1[] = {0x1A, 0xFE, 0x34, 0xDB, 0x3C, 0x64};
+uint8_t esp2[] = {0x1A, 0xFE, 0x34, 0xDA, 0xF1, 0xB8}; // esp number 2 - slave
+uint8_t esp3[] = {0x1A, 0xFE, 0x34, 0xEE, 0xCD, 0x15}; // esp number 3 - slave
+uint8_t esp4[] = {0x5E, 0xCF, 0x7F, 0x9, 0x9A, 0xFE}; // esp number 4 - slave
 
 void printMacAddress(uint8_t* macaddr) {
   Serial.print("{");
@@ -63,26 +68,25 @@ void setup() {
     Serial.print("  ");
   });
 
-  esp_now_register_send_cb([](uint8_t* macaddr, uint8_t status) {
-    Serial.print("send_cb");
-    Serial.print("mac address: ");
-    printMacAddress(macaddr);
-    Serial.print(" status = "); Serial.println(status);
-  });
-
+  int res1 = esp_now_add_peer(esp1, (uint8_t)ESP_NOW_ROLE_SLAVE, (uint8_t)WIFI_DEFAULT_CHANNEL, NULL, 0);
   int res2 = esp_now_add_peer(esp2, (uint8_t)ESP_NOW_ROLE_SLAVE, (uint8_t)WIFI_DEFAULT_CHANNEL, NULL, 0);
+  int res3 = esp_now_add_peer(esp3, (uint8_t)ESP_NOW_ROLE_SLAVE, (uint8_t)WIFI_DEFAULT_CHANNEL, NULL, 0);
+  int res4 = esp_now_add_peer(esp4, (uint8_t)ESP_NOW_ROLE_SLAVE, (uint8_t)WIFI_DEFAULT_CHANNEL, NULL, 0);
 
 }
 
-uint8_t b[] = {};
+uint8_t data[] = {};
+uint8_t len;
 
 void loop() {
 
   while (swSer.available() > 0) {
-    b[0] = swSer.read();
-    Serial.write(b[0]);
+
+    data[0] = swSer.read();
+    Serial.write(data[0]);
     Serial.println(" ");
-    esp_now_send(NULL, &b[0], 1);
+    len = 1;
+    esp_now_send(NULL, data, len);
   }
 
 }

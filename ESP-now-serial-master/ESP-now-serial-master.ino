@@ -6,14 +6,20 @@ extern "C" {
 #include <user_interface.h>
 }
 
-#define WIFI_DEFAULT_CHANNEL 8
+#define WIFI_DEFAULT_CHANNEL 9
 uint8_t mac[] = {0x1A, 0xFE, 0x34, 0xEE, 0xC8, 0x99}; // esp number 2 - master
 
 //SoftwareSerial mySerial (rxPin, txPin);
+
+#define CMMC_DEVICE_ID   1
+#define CMMC_DEVICE_MASK 0b00000010
+
+
 SoftwareSerial swSer(14, 12);
 
 #define button0 0
 #define button13 13
+#define LED 2
 
 void printMacAddress(uint8_t* macaddr) {
   Serial.print("{");
@@ -35,6 +41,8 @@ void setup() {
 
   pinMode(button0, INPUT);
   pinMode(button13, INPUT);
+  pinMode(LED, OUTPUT);
+  digitalWrite(LED, HIGH);
 
   WiFi.mode(WIFI_AP_STA);
 
@@ -54,7 +62,18 @@ void setup() {
   Serial.println("SET ROLE SLAVE");
   esp_now_set_self_role(ESP_NOW_ROLE_SLAVE);
   esp_now_register_recv_cb([](uint8_t *macaddr, uint8_t *data, uint8_t len) {
-    Serial.println(data[0]);
+
+    Serial.print(data[0], BIN);
+    Serial.println(" ");
+ 
+    Serial.println( !(data[0] & CMMC_DEVICE_MASK) );
+    digitalWrite(LED, data[0] & CMMC_DEVICE_MASK);
+    /*
+      if((data[0] & 0B1111111) == 0B1101000)  {
+      Serial.print(" Done ");
+      }
+    */
+    Serial.println(" ");
     delay(500);
   });
 

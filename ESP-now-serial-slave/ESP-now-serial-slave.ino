@@ -81,7 +81,6 @@ uint8_t len;
 void loop() {
 
   while (swSer.available() > 0) {
-
     data[0] = swSer.read();
     Serial.write(data[0]);
     Serial.println(" ");

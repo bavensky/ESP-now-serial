@@ -16,6 +16,8 @@ uint8_t esp1[] = {0x1A, 0xFE, 0x34, 0xDB, 0x3C, 0x64};
 uint8_t esp2[] = {0x1A, 0xFE, 0x34, 0xDA, 0xF1, 0xB8}; // esp number 2 - slave
 uint8_t esp3[] = {0x1A, 0xFE, 0x34, 0xEE, 0xCD, 0x15}; // esp number 3 - slave
 uint8_t esp4[] = {0x5E, 0xCF, 0x7F, 0x9, 0x9A, 0xFE}; // esp number 4 - slave
+uint8_t espdev[] = {0x1A, 0xFE, 0x34, 0xDB, 0x41, 0x41}; // esp - dev
+
 
 void printMacAddress(uint8_t* macaddr) {
   Serial.print("{");
@@ -72,7 +74,7 @@ void setup() {
   int res2 = esp_now_add_peer(esp2, (uint8_t)ESP_NOW_ROLE_SLAVE, (uint8_t)WIFI_DEFAULT_CHANNEL, NULL, 0);
   int res3 = esp_now_add_peer(esp3, (uint8_t)ESP_NOW_ROLE_SLAVE, (uint8_t)WIFI_DEFAULT_CHANNEL, NULL, 0);
   int res4 = esp_now_add_peer(esp4, (uint8_t)ESP_NOW_ROLE_SLAVE, (uint8_t)WIFI_DEFAULT_CHANNEL, NULL, 0);
-
+  int res5 = esp_now_add_peer(espdev, (uint8_t)ESP_NOW_ROLE_SLAVE, (uint8_t)WIFI_DEFAULT_CHANNEL, NULL, 0);
 }
 
 uint8_t data[] = {};
